@@ -11,17 +11,17 @@ def parse_brite_json(brite_json):
     #get level 1 data
     try:
         for i in range(len(brite_dict['children'])):
-            level1_name = " ".join(brite_dict['children'][i]['name'].split(' ')[1:])
+            level1_name = " ".join(brite_dict['children'][i]['name'].split(' ')[1:]).strip()
             level1_contents = brite_dict['children'][i]['children']
             #get level2 data
             try:
                 for j in range(len(level1_contents)):
-                    level2_name = " ".join(level1_contents[j]['name'].split(' ')[1:])
+                    level2_name = " ".join(level1_contents[j]['name'].split(' ')[1:]).strip()
                     level2_contents = level1_contents[j]['children']
                     #get level 3 data
                     try:
                         for k in range(len(level2_contents)):
-                            level3_name = " ".join(level2_contents[k]['name'].split(' ')[1:]).split("[")[0]
+                            level3_name = " ".join(level2_contents[k]['name'].split(' ')[1:]).split("[")[0].strip()
                             level3_contents = level2_contents[k]['children']
                             try:
                                 #get level 4 data
