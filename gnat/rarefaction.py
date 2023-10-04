@@ -1,7 +1,7 @@
 import pandas as pd
 import random
 
-# A function to generate sample pools from pandas dataframe
+#A function to generate sample pools from pandas dataframe
 # input[data]: A pandas dataframe where rows correspond to samples and columns correspond to the unique items within each sample. Sample ids should be the dataframe index
 # input[sample_id]: The identifier for the sample to generate the pool for.
 # output[total_pool]: A list of components (column headers) within each sample, where the total numebr of each component is equal to the corresponding value in the counts matrix.
