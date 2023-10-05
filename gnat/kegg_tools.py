@@ -4,68 +4,56 @@ def parse_brite_json(brite_json):
     #read file
     with open(brite_json, 'r') as infile:
         brite_dict = json.load(infile)
-    
+
     #initialize reformatted dictionary
     brite_reformatted = {}
-    
-    #get level 1 data
-    try:
-        for i in range(len(brite_dict['children'])):
-            level1_name = " ".join(brite_dict['children'][i]['name'].split(' ')[1:]).strip()
-            level1_contents = brite_dict['children'][i]['children']
-            #get level2 data
-            try:
-                for j in range(len(level1_contents)):
-                    level2_name = " ".join(level1_contents[j]['name'].split(' ')[1:]).strip()
-                    level2_contents = level1_contents[j]['children']
-                    #get level 3 data
-                    try:
-                        for k in range(len(level2_contents)):
-                            level3_name = " ".join(level2_contents[k]['name'].split(' ')[1:]).split("[")[0].strip()
-                            level3_contents = level2_contents[k]['children']
-                            try:
-                                #get level 4 data
-                                for l in range(len(level3_contents)):
-                                    level4_info = level3_contents[l]['name']
 
-                                    #collect information
-                                    gene_id = level4_info.split(' ')[0]
-                                    try:
-                                        name_1 = " ".join(level4_info.split(' ')[1:]).split('\t')[0]
-                                    except:
-                                        name_1 = 'NA'
-                                    try:
-                                        ko_number = level4_info.split('\t')[1].split(' ')[0]
-                                    except:
-                                        ko_number = 'NA'
-                                    try:
-                                        name_2 = level4_info.split(';')[1].strip()
-                                    except:
-                                        name_2 = 'NA'
+    #begin parsing
+    if 'children' in list(brite_dict.keys()):
+        parent_group = brite_dict['children']
+        #get level1 info
+        for level1_group in parent_group:
+            if 'name' in level1_group and 'children' in level1_group:
+                level1_name = level1_group['name']
+                
+                #get level2 info
+                for level2_group in level1_group['children']:
+                    if 'name' in level2_group and 'children' in level2_group:
+                        level2_name = level2_group['name']
 
-                                    heirarchy = {'functional_group_level1' : level1_name,
-                                                'functional_group_level2' : level2_name,
-                                                'functional_group_level3' : level3_name}
-                                    
-                                    #assemble entry for gene_id
-                                    entry = {'ko_number' : ko_number,
-                                             'description_1' : name_1,
-                                             'description_2' : name_2,
-                                             'functional_heirarcy' : heirarchy}
+                        #get level3 info
+                        for level3_group in level2_group['children']:
+                            if 'name' in level3_group and 'children' in level3_group:
+                                level3_name = level3_group['name']
+                                
+                                #get terminal info
+                                for level4_group in level3_group['children']:
+                                    if 'name' in level4_group:
+                                        gene_information = level4_group['name']
+                                        
+                                        #clean up info
+                                        gene_id = gene_information.split(' ')[0]
+                                        level1_name_cleaned = " ".join(level1_name.split(' ')[1:])
+                                        level2_name_cleaned = " ".join(level2_name.split(' ')[1:])
+                                        level3_name_cleaned = " ".join(level3_name.split(' ')[1:]).split("[")[0].strip()
 
-                                    #add information to dictionary
-                                    if gene_id not in brite_reformatted:
-                                        brite_reformatted[gene_id] = []
-                                    
-                                    brite_reformatted[gene_id].append(entry)
-                                    
-                            except:
-                                pass
-                    except:
-                        pass
-            except:
-                pass
-    except:
-        pass
+                                        heirarchy = {'functional_group_level1' : level1_name_cleaned,
+                                                    'functional_group_level2' : level2_name_cleaned,
+                                                    'functional_group_level3' : level3_name_cleaned}
+                                        
+                                        name_1 = " ".join(gene_information.split(' ')[1:]).split('\t')[0]
+                                        name_2 = gene_information.split(';')[1].strip()
+                                        ko_number = gene_information.split('\t')[1].split(' ')[0]
 
+                                        #assemble entry for gene_id
+                                        entry = {'ko_number' : ko_number,
+                                                    'description_1' : name_1,
+                                                    'description_2' : name_2,
+                                                    'functional_heirarcy' : heirarchy}
+                                        
+                                        #add information to dictionary
+                                        if gene_id not in brite_reformatted:
+                                            brite_reformatted[gene_id] = []
+                                        
+                                        brite_reformatted[gene_id].append(entry)
     return brite_reformatted
