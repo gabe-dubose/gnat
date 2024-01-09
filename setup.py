@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gnat",
-    version="2023.10",
+    version="2024.1",
     author="Gabe DuBose",
     author_email="gabe.dubose.sci@gmail.com",
     description="Gabe's aNAlysis Tools",
